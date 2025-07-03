@@ -15,6 +15,8 @@
       --button-hover: #1a365d;
       --border-color: #ccc;
       --highlight: #ebf8ff;
+      --chart-bg: #ffffff;
+      --chart-grid: #cccccc;
     }
 
     .dark {
@@ -25,6 +27,8 @@
       --button-hover: #2c5282;
       --border-color: #4a5568;
       --highlight: #2c5282;
+      --chart-bg: #2d3748;
+      --chart-grid: #555;
     }
 
     body {
@@ -82,13 +86,12 @@
       box-sizing: border-box;
     }
 
-    .flex-box label {
+    label {
       margin-top: 15px;
       font-weight: 600;
     }
 
-    .flex-box input,
-    .flex-box select {
+    input, select {
       margin-top: 5px;
       margin-bottom: 10px;
       width: 100%;
@@ -168,11 +171,6 @@
       border-radius: 10px;
     }
 
-    canvas {
-      max-width: 100%;
-      margin-top: 20px;
-    }
-
     .steps-box {
       margin-top: 10px;
       background-color: var(--highlight);
@@ -183,11 +181,18 @@
       word-break: break-word;
       box-sizing: border-box;
     }
+
+    canvas {
+      max-width: 100%;
+      margin-top: 20px;
+      background-color: var(--chart-bg);
+      border-radius: 8px;
+      padding: 10px;
+    }
   </style>
 </head>
 <body>
   <button id="toggle-theme" onclick="toggleTheme()">🌙 Mode Gelap</button>
-
   <h1>Metode Integrasi Numerik</h1>
   <h2>Aturan Titik Tengah & Segi Empat</h2>
 
@@ -235,7 +240,6 @@
         <div id="steps" class="steps-box"></div>
       </div>
     </div>
-
     <div class="flex-box">
       <canvas id="graph"></canvas>
     </div>
@@ -311,8 +315,9 @@
     function getColor() {
       return document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#000';
     }
+
     function getGridColor() {
-      return document.documentElement.classList.contains('dark') ? '#444' : '#ccc';
+      return document.documentElement.classList.contains('dark') ? '#555' : '#ccc';
     }
 
     function drawGraph(expr, a, b, xVals = [], yVals = []) {
@@ -403,9 +408,7 @@
       html.classList.toggle('light', !isDark);
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
       document.getElementById('toggle-theme').innerText = isDark ? '☀️ Mode Terang' : '🌙 Mode Gelap';
-      drawGraph(document.getElementById('function').value.trim(), 
-                parseFloat(document.getElementById('lower').value) || 0, 
-                parseFloat(document.getElementById('upper').value) || 2, [], []);
+      calculateIntegration();
     }
 
     window.onload = () => {
