@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Metode Integrasi Numerik</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #2a4365;
+      margin-bottom: 20px; /* Menambahkan ruang antara judul dan kolom */
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      max-width: 1200px;
+      margin: auto;
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .left, .right {
+      flex: 1;
+      min-width: 300px;
+    }
+    input, button, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #2a4365;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1a365d;
+    }
+    .method-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .method-buttons button {
+      flex: 1;
+      padding: 10px 0;
+      border: 1px solid #2a4365;
+      background-color: white;
+      color: #2a4365;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .method-buttons button.active {
+      background-color: #2a4365;
+      color: white;
+    }
+    .method-buttons button:hover:not(.active) {
+      background-color: #e2e8f0;
+    }
+    .result-box, .steps {
+      margin-top: 20px;
+      background-color: #ebf8ff;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 20px;
+    }
+    .steps-box {
+      margin-top: 10px;
+      background-color: #ebf8ff;
+      padding: 15px;
+      border-radius: 10px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-break: break-word;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <h1>Metode Integrasi Numerik</h1>
+  <h2>Aturan Titik Tengah & Segi Empat</h2>
+  <div class="container">
+    <div class="left">
+      <label for="coefficient">Koefisien (misal 3 untuk 3x²)</label>
+      <input type="number" id="coefficient" value="1" />
+
+      <label for="function">Pilih Fungsi f(x)</label>
+      <select id="function">
+        <option value="">-- Pilih Fungsi --</option>
+        <option value="sin(x)">sin(x)</option>
+        <option value="cos(x)">cos(x)</option>
+        <option value="tan(x)">tan(x)</option>
+        <option value="x^2">x²</option>
+        <option value="sqrt(x)">√x</option>
+        <option value="log(x)">log(x)</option>
+        <option value="exp(x)">e^x</option>
+      </select>
+
+      <label>Batas Bawah (a)</label>
+      <input type="number" id="lower" value="" />
+
+      <label>Batas Atas (b)</label>
+      <input type="number" id="upper" value="" />
+
+      <label>Jumlah Interval (n)</label>
+      <input type="number" id="intervals" value="" min="1" />
+
+      <label>Pilih Metode</label>
+      <div class="method-buttons">
+        <button type="button" id="btnMidpoint" class="active">Titik Tengah</button>
+        <button type="button" id="btnLeftRectangle">Segi Empat Kiri</button>
+        <button type="button" id="btnRightRectangle">Segi Empat Kanan</button>
+        <button type="button" id="btnCombinedRectangle">Segi Empat Gabungan</button>
+      </div>
+
+      <button onclick="calculateIntegration()">Hitung</button>
+      <button onclick="resetInputs()">Reset</button>
+
+      <div class="result-box">
+        <h3>Hasil Perkiraan:</h3>
+        <p id="result"></p>
+      </div>
+
+      <div class="steps">
+        <h3>Langkah-langkah Perhitungan:</h3>
+        <div id="steps" class="steps-box"></div>
+      </div>
+    </div>
+
+    <div class="right">
+      <canvas id="graph"></canvas>
+    </div>
+  </div>
+
+  <script>
+    let selectedMethod = 'midpoint';
+
+    document.getElementById('btnMidpoint').addEventListener('click', () => {
+      selectedMethod = 'midpoint';
+      setActiveButton('btnMidpoint');
+    });
+
+    document.getElementById('btnLeftRectangle').addEventListener('click', () => {
+      selectedMethod = 'leftRectangle';
+      setActiveButton('btnLeftRectangle');
+    });
+
+    document.getElementById('btnRightRectangle').addEventListener('click', () => {
+      selectedMethod = 'rightRectangle';
+      setActiveButton('btnRightRectangle');
+    });
+
+    document.getElementById('btnCombinedRectangle').addEventListener('click', () => {
+      selectedMethod = 'combinedRectangle';
+      setActiveButton('btnCombinedRectangle');
+    });
+
+    function setActiveButton(activeId) {
+      const buttons = ['btnMidpoint', 'btnLeftRectangle', 'btnRightRectangle', 'btnCombinedRectangle'];
+      buttons.forEach(id => {
+        const button = document.getElementById(id);
+        if (id === activeId) {
+          button.classList.add('active');
+        } else {
+          button.classList.remove('active');
+        }
+      });
+    }
+
+    function calculateIntegration() {
+      const coefficient = parseFloat(document.getElementById('coefficient').value);
+      const expr = document.getElementById('function').value.trim();
+      const a = parseFloat(document.getElementById('lower').value);
+      const b = parseFloat(document.getElementById('upper').value);
+      const n = parseInt(document.getElementById('intervals').value);
+      const h = (b - a) / n;
+
+      if (!expr || isNaN(a) || isNaN(b) || isNaN(n)) {
+        alert('Silakan isi semua kolom dan pilih fungsi terlebih dahulu.');
+        document.getElementById('result').textContent = '';
+        document.getElementById('steps').textContent = '';
+        drawGraph('', 0, 2);
+        return;
+      }
+
+      let result = 0;
+      let steps = `1. Panjang sub-interval: h = (b - a)/n = (${b} - ${a}) / ${n} = ${h.toFixed(4)}\n\n`;
+      steps += `2. Nilai f(x):\n`;
+
+      let xVals = [], yVals = [], displaySteps = [];
+
+      for (let i = 0; i < n; i++) {
+        let x;
+        if (selectedMethod === 'midpoint') {
+          x = a + (i + 0.5) * h;
+        } else if (selectedMethod === 'leftRectangle') {
+          x = a + i * h;
+        } else if (selectedMethod === 'rightRectangle') {
+          x = a + (i + 1) * h;
+        } else if (selectedMethod === 'combinedRectangle') {
+          // Metode gabungan: rata-rata dari kiri dan kanan
+          let leftX = a + i * h;
+          let rightX = a + (i + 1) * h;
+          let leftFx = coefficient * math.evaluate(expr, { x: leftX });
+          let rightFx = coefficient * math.evaluate(expr, { x: rightX });
+          result += (leftFx + rightFx) / 2; // Rata-rata
+          steps += `   xₗ = ${leftX.toFixed(4)} → f(xₗ) = ${leftFx.toFixed(6)}\n`;
+          steps += `   xᵣ = ${rightX.toFixed(4)} → f(xᵣ) = ${rightFx.toFixed(6)}\n`;
+          continue; // Lanjut ke iterasi berikutnya
+        }
+
+        let fx = coefficient * math.evaluate(expr, { x });
+        result += fx;
+
+        steps += `   x = ${x.toFixed(4)} → f(x) = ${fx.toFixed(6)}\n`;
+        xVals.push(x);
+        yVals.push(fx);
+        displaySteps.push(fx);
+      }
+
+      const total = result * h;
+      steps += `\n3. Σ f(x) = ${displaySteps.map(v => v.toFixed(6)).join(' + ')} = ${result.toFixed(6)}\n`;
+      steps += `\n4. Luas ≈ h × Σ f(x) = ${h.toFixed(4)} × ${result.toFixed(6)} = ${total.toFixed(6)}\n`;
+
+      document.getElementById('result').innerHTML = `∫<sub>${a}</sub><sup>${b}</sup> ${coefficient} * ${expr} dx ≈ ${total.toFixed(6)}`;
+      document.getElementById('steps').textContent = steps;
+
+      drawGraph(expr, a, b, xVals, yVals);
+    }
+
+    function drawGraph(expr, a, b, xVals = [], yVals = []) {
+      const ctx = document.getElementById('graph').getContext('2d');
+      const labels = [];
+      const data = [];
+      const stepCount = 200;
+      const stepSize = (b - a) / stepCount;
+
+      for (let i = 0; i <= stepCount; i++) {
+        let x = a + i * stepSize;
+        labels.push(x.toFixed(2));
+        try {
+          let y = expr ? math.evaluate(expr, { x }) : 0;
+          data.push(y);
+        } catch {
+          data.push(null);
+        }
+      }
+
+      if (window.chart) window.chart.destroy();
+
+      window.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'f(x)',
+              data,
+              borderColor: 'rgba(75, 192, 192, 1)',
+              backgroundColor: 'rgba(75, 192, 192, 0.1)',
+              tension: 0.4,
+              fill: false,
+              pointRadius: 0
+            },
+            {
+              type: 'bar',
+              label: 'Pendekatan Integral',
+              data: xVals.map((x, i) => ({ x, y: yVals[i] })),
+              backgroundColor: 'rgba(255, 99, 132, 0.5)',
+              barThickness: (b - a) / xVals.length * 40,
+              borderSkipped: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          animation: false,
+          scales: {
+            x: {
+              title: { display: true, text: 'x' },
+              type: 'linear',
+              min: a,
+              max: b
+            },
+            y: {
+              title: { display: true, text: 'f(x)' },
+              beginAtZero: true
+            }
+          },
+          plugins: {
+            legend: { display: true }
+          }
+        }
+      });
+    }
+
+    function resetInputs() {
+      document.getElementById('coefficient').value = '1';
+      document.getElementById('function').value = '';
+      document.getElementById('lower').value = '';
+      document.getElementById('upper').value = '';
+      document.getElementById('intervals').value = '';
+      document.getElementById('result').textContent = '';
+      document.getElementById('steps').textContent = '';
+      drawGraph('', 0, 2);
+    }
+
+    window.onload = () => drawGraph('', 0, 2);
+  </script>
+</body>
+</html>
