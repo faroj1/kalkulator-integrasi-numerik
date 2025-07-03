@@ -16,7 +16,6 @@
       flex-direction: column;
       align-items: center;
       box-sizing: border-box;
-      overflow-x: hidden;
     }
 
     h1, h2 {
@@ -35,7 +34,6 @@
       background-color: #fff;
       border-radius: 12px;
       padding: 20px;
-      box-sizing: border-box;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
@@ -65,44 +63,33 @@
 
     .button-group {
       display: flex;
-      overflow-x: auto;
+      flex-wrap: wrap;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       background: #e0e0e0;
       margin-top: 10px;
-      gap: 0;
-      scrollbar-width: none;
-    }
-
-    .button-group::-webkit-scrollbar {
-      display: none;
     }
 
     .method-button {
-      flex: 0 0 auto;
-      padding: 12px 20px;
-      font-size: 16px;
+      flex: 1 1 50%;
+      padding: 12px 10px;
+      font-size: 15px;
       border: none;
       background: #ffffff;
       color: #333;
       cursor: pointer;
       transition: background-color 0.3s ease, color 0.3s ease;
       outline: none;
-      white-space: nowrap;
-    }
-
-    .method-button:not(:last-child) {
-      border-right: 1px solid #ccc;
+      text-align: center;
+      box-sizing: border-box;
     }
 
     .method-button:first-child {
       border-top-left-radius: 12px;
-      border-bottom-left-radius: 12px;
     }
 
     .method-button:last-child {
       border-top-right-radius: 12px;
-      border-bottom-right-radius: 12px;
     }
 
     .method-button:hover {
@@ -154,6 +141,12 @@
       white-space: pre-wrap;
       word-break: break-word;
       box-sizing: border-box;
+    }
+
+    @media (max-width: 400px) {
+      .method-button {
+        flex: 1 1 100%;
+      }
     }
   </style>
 </head>
