@@ -42,9 +42,10 @@
       }
     }
 
-    .left, .right {
+    .flex-box {
+      display: flex;
+      flex-direction: column; /* Mengatur elemen dalam kolom */
       flex: 1;
-      min-width: 300px;
       padding: 10px; /* Menambahkan padding untuk simetri */
     }
 
@@ -149,7 +150,7 @@
   <h1>Metode Integrasi Numerik</h1>
   <h2>Aturan Titik Tengah & Segi Empat</h2>
   <div class="container">
-    <div class="left">
+    <div class="flex-box">
       <label for="function">Pilih Fungsi f(x)</label>
       <select id="function">
         <option value="">-- Pilih Fungsi --</option>
@@ -193,7 +194,7 @@
       </div>
     </div>
 
-    <div class="right">
+    <div class="flex-box">
       <canvas id="graph"></canvas>
     </div>
   </div>
