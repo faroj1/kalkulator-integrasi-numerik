@@ -7,9 +7,32 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.js"></script>
   <style>
+    :root {
+      --bg-color: #f0f4f8;
+      --card-color: #ffffff;
+      --text-color: #2a4365;
+      --button-bg: #2a4365;
+      --button-hover: #1a365d;
+      --border-color: #ccc;
+      --highlight: #ebf8ff;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #1a202c;
+        --card-color: #2d3748;
+        --text-color: #e2e8f0;
+        --button-bg: #4a5568;
+        --button-hover: #2c5282;
+        --border-color: #4a5568;
+        --highlight: #2c5282;
+      }
+    }
+
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f0f4f8;
+      background-color: var(--bg-color);
+      color: var(--text-color);
       margin: 0;
       padding: 20px;
       display: flex;
@@ -20,7 +43,6 @@
 
     h1, h2 {
       text-align: center;
-      color: #2a4365;
       margin-bottom: 20px;
     }
 
@@ -31,7 +53,7 @@
       width: 100%;
       max-width: 1200px;
       margin: auto;
-      background-color: #fff;
+      background-color: var(--card-color);
       border-radius: 12px;
       padding: 20px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -53,12 +75,25 @@
       min-width: 0;
     }
 
-    input, select {
+    .flex-box label {
+      margin-top: 15px;
+      font-weight: 600;
+    }
+
+    .flex-box label:first-of-type {
+      margin-top: 0;
+    }
+
+    .flex-box input,
+    .flex-box select {
+      margin-top: 5px;
+      margin-bottom: 10px;
       width: 100%;
       padding: 10px;
-      margin-top: 10px;
       border-radius: 8px;
-      border: 1px solid #ccc;
+      border: 1px solid var(--border-color);
+      background-color: var(--card-color);
+      color: var(--text-color);
       box-sizing: border-box;
     }
 
@@ -72,43 +107,48 @@
       background: #e0e0e0;
     }
 
+    @media (prefers-color-scheme: dark) {
+      .button-group {
+        background: #4a5568;
+      }
+    }
+
     .method-button {
       flex: 1 1 50%;
       padding: 12px 10px;
       font-size: 15px;
       border: none;
-      background: #ffffff;
-      color: #333;
+      background: var(--card-color);
+      color: var(--text-color);
       cursor: pointer;
       transition: background-color 0.3s ease, color 0.3s ease;
-      outline: none;
       text-align: center;
       box-sizing: border-box;
-      border-right: 1px solid #ccc;
-      border-bottom: 1px solid #ccc;
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
     }
 
     .method-button:nth-child(2n) {
-      border-right: none; /* Hapus garis kanan tombol genap */
+      border-right: none;
     }
 
     .method-button:nth-last-child(-n+2) {
-      border-bottom: none; /* Hapus garis bawah dua tombol terakhir */
+      border-bottom: none;
     }
 
     .method-button:hover {
-      background-color: #1a365d;
+      background-color: var(--button-hover);
       color: white;
     }
 
     .method-button.active {
-      background-color: #2a4365;
+      background-color: var(--button-bg);
       color: white;
     }
 
     .action-button {
       height: 50px;
-      background-color: #2a4365;
+      background-color: var(--button-bg);
       color: white;
       font-weight: bold;
       font-size: 1.2rem;
@@ -121,12 +161,12 @@
     }
 
     .action-button:hover {
-      background-color: #1a365d;
+      background-color: var(--button-hover);
     }
 
     .result-box, .steps {
       margin-top: 20px;
-      background-color: #ebf8ff;
+      background-color: var(--highlight);
       padding: 15px;
       border-radius: 10px;
     }
@@ -138,7 +178,7 @@
 
     .steps-box {
       margin-top: 10px;
-      background-color: #ebf8ff;
+      background-color: var(--highlight);
       padding: 15px;
       border-radius: 10px;
       font-family: monospace;
@@ -155,7 +195,6 @@
   </style>
 </head>
 <body>
-
   <h1>Metode Integrasi Numerik</h1>
   <h2>Aturan Titik Tengah & Segi Empat</h2>
 
