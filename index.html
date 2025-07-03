@@ -4,8 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Metode Integrasi Numerik</title>
+
+  <!-- Favicon Kalkulator -->
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3661/3661394.png" />
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.js"></script>
+
   <style>
     :root {
       --bg: #f0f4f8;
@@ -56,7 +61,7 @@
 
     h1, h2 {
       text-align: center;
-      margin-bottom: 10px;
+      margin: 10px 0;
     }
 
     .container {
@@ -179,6 +184,7 @@
     }
   </style>
 </head>
+
 <body>
   <button id="toggle-theme" onclick="toggleTheme()">🌙</button>
 
@@ -352,9 +358,7 @@
             }
           },
           plugins: {
-            legend: {
-              labels: { color: getColor() }
-            }
+            legend: { labels: { color: getColor() } }
           }
         }
       });
