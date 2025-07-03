@@ -8,16 +8,21 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background-color: #f0f4f8;
       margin: 0;
       padding: 20px;
+      height: 100vh;
+      display: grid;
+      place-items: center;
     }
+
     h1, h2 {
       text-align: center;
       color: #2a4365;
       margin-bottom: 20px; /* Menambahkan ruang antara judul dan kolom */
     }
+
     .container {
       display: flex;
       flex-wrap: wrap;
@@ -29,11 +34,13 @@
       padding: 20px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
+
     .left, .right {
       flex: 1;
       min-width: 300px;
     }
-    input, button, select {
+
+    input, select {
       width: 100%;
       padding: 10px;
       margin-top: 10px;
@@ -41,47 +48,82 @@
       border: 1px solid #ccc;
       box-sizing: border-box;
     }
-    button {
-      background-color: #2a4365;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #1a365d;
-    }
-    .method-buttons {
+
+    .button-group {
       display: flex;
-      gap: 10px;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      background: #e0e0e0;
       margin-top: 10px;
     }
-    .method-buttons button {
-      flex: 1;
-      padding: 10px 0;
-      border: 1px solid #2a4365;
-      background-color: white;
-      color: #2a4365;
-      border-radius: 8px;
+
+    .method-button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      background: #ffffff;
+      color: #333;
       cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.3s, color 0.3s;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      flex: 1;
+      outline: none;
     }
-    .method-buttons button.active {
-      background-color: #2a4365;
+
+    .method-button:not(:last-child) {
+      border-right: 1px solid #ccc;
+    }
+
+    .method-button:first-child {
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+    }
+
+    .method-button:last-child {
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+
+    .method-button:hover {
+      background-color: #1a365d; /* Warna biru gelap saat hover */
       color: white;
     }
-    .method-buttons button:hover:not(.active) {
-      background-color: #e2e8f0;
+
+    .method-button.active {
+      background-color: #2a4365; /* Warna biru yang sama dengan tombol Hitung */
+      color: white;
     }
+
+    .action-button {
+      height: 50px;
+      background-color: #2a4365; /* Warna biru yang sama */
+      color: white;
+      font-weight: bold;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s; /* Transisi untuk efek hover dan aktif */
+      width: 100%; /* Mengatur lebar tombol agar penuh */
+      margin-top: 10px;
+    }
+
+    .action-button:hover {
+      background-color: #1a365d; /* Warna biru gelap saat hover */
+    }
+
     .result-box, .steps {
       margin-top: 20px;
       background-color: #ebf8ff;
       padding: 15px;
       border-radius: 10px;
     }
+
     canvas {
       max-width: 100%;
       margin-top: 20px;
     }
+
     .steps-box {
       margin-top: 10px;
       background-color: #ebf8ff;
@@ -95,13 +137,11 @@
   </style>
 </head>
 <body>
+
   <h1>Metode Integrasi Numerik</h1>
   <h2>Aturan Titik Tengah & Segi Empat</h2>
   <div class="container">
     <div class="left">
-      <label for="coefficient">Koefisien (misal 3 untuk 3x²)</label>
-      <input type="number" id="coefficient" value="1" />
-
       <label for="function">Pilih Fungsi f(x)</label>
       <select id="function">
         <option value="">-- Pilih Fungsi --</option>
@@ -124,15 +164,15 @@
       <input type="number" id="intervals" value="" min="1" />
 
       <label>Pilih Metode</label>
-      <div class="method-buttons">
-        <button type="button" id="btnMidpoint" class="active">Titik Tengah</button>
-        <button type="button" id="btnLeftRectangle">Segi Empat Kiri</button>
-        <button type="button" id="btnRightRectangle">Segi Empat Kanan</button>
-        <button type="button" id="btnCombinedRectangle">Segi Empat Gabungan</button>
+      <div class="button-group">
+        <button class="method-button" id="btnMidpoint" onclick="pilihMetode(this, 'Titik Tengah')">Titik Tengah</button>
+        <button class="method-button" id="btnLeftRectangle" onclick="pilihMetode(this, 'Segi Empat Kiri')">Segi Empat Kiri</button>
+        <button class="method-button" id="btnRightRectangle" onclick="pilihMetode(this, 'Segi Empat Kanan')">Segi Empat Kanan</button>
+        <button class="method-button" id="btnCombinedRectangle" onclick="pilihMetode(this, 'Segi Empat Gabungan')">Segi Empat Gabungan</button>
       </div>
 
-      <button onclick="calculateIntegration()">Hitung</button>
-      <button onclick="resetInputs()">Reset</button>
+      <button class="action-button" onclick="calculateIntegration()">Hitung</button>
+      <button class="action-button" onclick="resetInputs()">Reset</button>
 
       <div class="result-box">
         <h3>Hasil Perkiraan:</h3>
@@ -151,42 +191,17 @@
   </div>
 
   <script>
-    let selectedMethod = 'midpoint';
+    let selectedMethod = 'Titik Tengah';
 
-    document.getElementById('btnMidpoint').addEventListener('click', () => {
-      selectedMethod = 'midpoint';
-      setActiveButton('btnMidpoint');
-    });
-
-    document.getElementById('btnLeftRectangle').addEventListener('click', () => {
-      selectedMethod = 'leftRectangle';
-      setActiveButton('btnLeftRectangle');
-    });
-
-    document.getElementById('btnRightRectangle').addEventListener('click', () => {
-      selectedMethod = 'rightRectangle';
-      setActiveButton('btnRightRectangle');
-    });
-
-    document.getElementById('btnCombinedRectangle').addEventListener('click', () => {
-      selectedMethod = 'combinedRectangle';
-      setActiveButton('btnCombinedRectangle');
-    });
-
-    function setActiveButton(activeId) {
-      const buttons = ['btnMidpoint', 'btnLeftRectangle', 'btnRightRectangle', 'btnCombinedRectangle'];
-      buttons.forEach(id => {
-        const button = document.getElementById(id);
-        if (id === activeId) {
-          button.classList.add('active');
-        } else {
-          button.classList.remove('active');
-        }
-      });
+    function pilihMetode(button, metode) {
+      // Reset semua tombol
+      document.querySelectorAll('.method-button').forEach(btn => btn.classList.remove('active'));
+      // Tambahkan class aktif ke tombol yang diklik
+      button.classList.add('active');
+      selectedMethod = metode; // Simpan metode yang dipilih
     }
 
     function calculateIntegration() {
-      const coefficient = parseFloat(document.getElementById('coefficient').value);
       const expr = document.getElementById('function').value.trim();
       const a = parseFloat(document.getElementById('lower').value);
       const b = parseFloat(document.getElementById('upper').value);
@@ -209,25 +224,25 @@
 
       for (let i = 0; i < n; i++) {
         let x;
-        if (selectedMethod === 'midpoint') {
+        if (selectedMethod === 'Titik Tengah') {
           x = a + (i + 0.5) * h;
-        } else if (selectedMethod === 'leftRectangle') {
+        } else if (selectedMethod === 'Segi Empat Kiri') {
           x = a + i * h;
-        } else if (selectedMethod === 'rightRectangle') {
+        } else if (selectedMethod === 'Segi Empat Kanan') {
           x = a + (i + 1) * h;
-        } else if (selectedMethod === 'combinedRectangle') {
+        } else if (selectedMethod === 'Segi Empat Gabungan') {
           // Metode gabungan: rata-rata dari kiri dan kanan
           let leftX = a + i * h;
           let rightX = a + (i + 1) * h;
-          let leftFx = coefficient * math.evaluate(expr, { x: leftX });
-          let rightFx = coefficient * math.evaluate(expr, { x: rightX });
+          let leftFx = math.evaluate(expr, { x: leftX });
+          let rightFx = math.evaluate(expr, { x: rightX });
           result += (leftFx + rightFx) / 2; // Rata-rata
           steps += `   xₗ = ${leftX.toFixed(4)} → f(xₗ) = ${leftFx.toFixed(6)}\n`;
           steps += `   xᵣ = ${rightX.toFixed(4)} → f(xᵣ) = ${rightFx.toFixed(6)}\n`;
           continue; // Lanjut ke iterasi berikutnya
         }
 
-        let fx = coefficient * math.evaluate(expr, { x });
+        let fx = math.evaluate(expr, { x });
         result += fx;
 
         steps += `   x = ${x.toFixed(4)} → f(x) = ${fx.toFixed(6)}\n`;
@@ -240,7 +255,7 @@
       steps += `\n3. Σ f(x) = ${displaySteps.map(v => v.toFixed(6)).join(' + ')} = ${result.toFixed(6)}\n`;
       steps += `\n4. Luas ≈ h × Σ f(x) = ${h.toFixed(4)} × ${result.toFixed(6)} = ${total.toFixed(6)}\n`;
 
-      document.getElementById('result').innerHTML = `∫<sub>${a}</sub><sup>${b}</sup> ${coefficient} * ${expr} dx ≈ ${total.toFixed(6)}`;
+      document.getElementById('result').innerHTML = `∫<sub>${a}</sub><sup>${b}</sup> ${expr} dx ≈ ${total.toFixed(6)}`;
       document.getElementById('steps').textContent = steps;
 
       drawGraph(expr, a, b, xVals, yVals);
@@ -313,7 +328,6 @@
     }
 
     function resetInputs() {
-      document.getElementById('coefficient').value = '1';
       document.getElementById('function').value = '';
       document.getElementById('lower').value = '';
       document.getElementById('upper').value = '';
