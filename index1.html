@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -17,16 +17,14 @@
       --highlight: #ebf8ff;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #1a202c;
-        --card-color: #2d3748;
-        --text-color: #e2e8f0;
-        --button-bg: #4a5568;
-        --button-hover: #2c5282;
-        --border-color: #4a5568;
-        --highlight: #2c5282;
-      }
+    .dark {
+      --bg-color: #1a202c;
+      --card-color: #2d3748;
+      --text-color: #e2e8f0;
+      --button-bg: #4a5568;
+      --button-hover: #2c5282;
+      --border-color: #4a5568;
+      --highlight: #2c5282;
     }
 
     body {
@@ -72,7 +70,6 @@
       flex: 1;
       padding: 10px;
       box-sizing: border-box;
-      min-width: 0;
     }
 
     .flex-box label {
@@ -104,13 +101,7 @@
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      background: #e0e0e0;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .button-group {
-        background: #4a5568;
-      }
+      background: var(--border-color);
     }
 
     .method-button {
@@ -122,7 +113,6 @@
       color: var(--text-color);
       cursor: pointer;
       transition: background-color 0.3s ease, color 0.3s ease;
-      text-align: center;
       box-sizing: border-box;
       border-right: 1px solid var(--border-color);
       border-bottom: 1px solid var(--border-color);
@@ -132,7 +122,8 @@
       border-right: none;
     }
 
-    .method-button:nth-last-child(-n+2) {
+    .method-button:nth-child(3),
+    .method-button:nth-child(4) {
       border-bottom: none;
     }
 
@@ -187,14 +178,24 @@
       box-sizing: border-box;
     }
 
-    @media (max-width: 480px) {
-      .method-button {
-        flex: 1 1 100%;
-      }
+    #toggle-theme {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 999;
+      padding: 10px 15px;
+      border-radius: 8px;
+      background: var(--button-bg);
+      color: white;
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
+
+  <button id="toggle-theme" onclick="toggleTheme()">🌙 Mode Gelap</button>
+
   <h1>Metode Integrasi Numerik</h1>
   <h2>Aturan Titik Tengah & Segi Empat</h2>
 
@@ -391,7 +392,24 @@
       drawGraph('', 0, 2);
     }
 
-    window.onload = () => drawGraph('', 0, 2);
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle('dark');
+      html.classList.toggle('light', !isDark);
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      document.getElementById('toggle-theme').innerText = isDark ? '☀️ Mode Terang' : '🌙 Mode Gelap';
+    }
+
+    window.onload = () => {
+      const saved = localStorage.getItem('theme');
+      const html = document.documentElement;
+      if (saved === 'dark') {
+        html.classList.add('dark');
+        html.classList.remove('light');
+        document.getElementById('toggle-theme').innerText = '☀️ Mode Terang';
+      }
+      drawGraph('', 0, 2);
+    };
   </script>
 </body>
 </html>
