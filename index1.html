@@ -35,9 +35,8 @@
       background-color: #fff;
       border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
       box-sizing: border-box;
-      overflow-x: auto;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
     @media (min-width: 768px) {
@@ -66,14 +65,21 @@
 
     .button-group {
       display: flex;
-      overflow: hidden;
+      overflow-x: auto;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       background: #e0e0e0;
       margin-top: 10px;
+      gap: 0;
+      scrollbar-width: none;
+    }
+
+    .button-group::-webkit-scrollbar {
+      display: none;
     }
 
     .method-button {
+      flex: 0 0 auto;
       padding: 12px 20px;
       font-size: 16px;
       border: none;
@@ -81,8 +87,8 @@
       color: #333;
       cursor: pointer;
       transition: background-color 0.3s ease, color 0.3s ease;
-      flex: 1;
       outline: none;
+      white-space: nowrap;
     }
 
     .method-button:not(:last-child) {
