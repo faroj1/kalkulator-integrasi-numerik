@@ -25,14 +25,21 @@
 
     .container {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column; /* Mengubah arah flex menjadi kolom untuk mobile */
       gap: 20px;
       max-width: 1200px;
+      width: 100%; /* Memastikan lebar 100% pada mobile */
       margin: auto;
       background-color: #fff;
       border-radius: 12px;
       padding: 20px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        flex-direction: row; /* Mengubah arah flex menjadi baris untuk layar lebih besar */
+      }
     }
 
     .left, .right {
