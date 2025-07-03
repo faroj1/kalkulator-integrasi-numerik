@@ -44,14 +44,14 @@
 
     #toggle-theme {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      font-size: 1.5rem;
+      top: 15px;
+      right: 15px;
+      font-size: 1.6rem;
       background: transparent;
       border: none;
       cursor: pointer;
       color: var(--text);
-      z-index: 1000;
+      z-index: 999;
     }
 
     h1, h2 {
@@ -69,6 +69,7 @@
       border-radius: 12px;
       padding: 20px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-top: 60px;
     }
 
     @media (min-width: 768px) {
@@ -252,7 +253,6 @@
       const h = (b - a) / n;
 
       if (!expr || isNaN(a) || isNaN(b) || isNaN(n)) {
-        alert('Silakan isi semua kolom dan pilih fungsi terlebih dahulu.');
         document.getElementById('result').textContent = '';
         document.getElementById('steps').textContent = '';
         drawGraph('', 0, 2);
@@ -382,7 +382,7 @@
       html.classList.toggle('light', !isDark);
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
       document.getElementById('toggle-theme').textContent = isDark ? '☀️' : '🌙';
-      calculateIntegration();
+      drawGraph('', 0, 2);
     }
 
     window.onload = () => {
