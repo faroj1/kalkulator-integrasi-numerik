@@ -230,23 +230,24 @@
       }
 
       let result = 0, steps = '', xVals = [], yVals = [], tableRows = [];
-
-      steps += `1. Panjang sub-interval: h = (b - a)/n = (${b} - ${a}) / ${n} = ${h.toFixed(4)}\n\n2. Nilai f(x):\n`;
+      steps += `1. Panjang sub-interval:\n   h = (b - a)/n = (${b} - ${a}) / ${n} = ${h.toFixed(4)}\n\n2. Nilai f(x) per interval:\n`;
 
       for (let i = 0; i < n; i++) {
         let xi = a + i * h;
-        let xr;
-        if (selectedMethod === 'Titik Tengah') xr = xi + h / 2;
-        else if (selectedMethod === 'Segi Empat Kiri') xr = xi;
-        else if (selectedMethod === 'Segi Empat Kanan') xr = xi + h;
-        else xr = xi + h / 2;
+        let xr = selectedMethod === 'Segi Empat Kiri' ? xi :
+                 selectedMethod === 'Segi Empat Kanan' ? xi + h :
+                 xi + h / 2;
 
         let fxr = math.evaluate(expr, { x: xr });
         result += fxr;
         xVals.push(xr);
         yVals.push(fxr);
-        steps += `i=${i + 1}, xr=${xr.toFixed(4)}, f(xr)=${fxr.toFixed(6)}\n`;
-        tableRows.push(`<tr><td>${i + 1}</td><td>${xr.toFixed(6)}</td><td>${fxr.toFixed(6)}</td></tr>`);
+
+        let fxrExpr = expr.replace(/x/g, `(${xr.toFixed(6)})`);
+        steps += `i=${i + 1}, xi=${xi.toFixed(4)}, xr=xi + h/2 = ${xi.toFixed(4)} + ${(h/2).toFixed(4)} = ${xr.toFixed(4)}, `;
+        steps += `f(xr) = ${fxrExpr} = ${fxr.toFixed(6)}\n`;
+
+        tableRows.push(`<tr><td>${i + 1}</td><td>${xi.toFixed(6)}</td><td>${xr.toFixed(6)}</td><td>${fxr.toFixed(6)}</td></tr>`);
       }
 
       const total = result * h;
@@ -257,7 +258,7 @@
 
       document.getElementById('table-container').innerHTML = `
         <table>
-          <thead><tr><th>i</th><th>xr</th><th>f(xr)</th></tr></thead>
+          <thead><tr><th>i</th><th>xi</th><th>xr</th><th>f(xr)</th></tr></thead>
           <tbody>${tableRows.join('')}</tbody>
         </table>
       `;
@@ -296,8 +297,16 @@
               label: 'Pendekatan Integral',
               data: xVals.map((x, i) => ({ x, y: yVals[i] })),
               backgroundColor: 'rgba(255, 99, 132, 0.5)',
-              barThickness: (b - a) / xVals.length * 40,
+              barThickness: (b - a) / xVals.length * 10,
               borderSkipped: false
+            },
+            {
+              type: 'scatter',
+              label: 'Titik xr',
+              data: xVals.map((x, i) => ({ x, y: yVals[i] })),
+              backgroundColor: 'blue',
+              pointRadius: 3,
+              pointHoverRadius: 5
             }
           ]
         },
